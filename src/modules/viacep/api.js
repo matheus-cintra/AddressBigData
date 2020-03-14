@@ -22,11 +22,7 @@ router.get('/api/v1/addressBigData/:cep', async (req, res) => {
         data: { message: 'CEP must contain 8 digits' }
       });
 
-    console.warn('CEP > ', cep);
-
     const cepExists = await Address.findOne({ cep: cep });
-
-    console.warn('CepExists > ', cepExists);
 
     if (cepExists) return res.status(200).json(cepExists);
 
