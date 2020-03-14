@@ -22,16 +22,19 @@ router.get('/api/v1/addressBigData/:cep', async (req, res) => {
         data: { message: 'CEP must contain 8 digits' }
       });
 
-    const cepExists = await Address.findOne({ cep });
+    console.warn('CEP > ', cep);
 
-    if (cepExists && cepExists.length > 0)
-      return res.status(200).json(cepExists);
+    const cepExists = await Address.findOne({ cep: cep });
+
+    console.warn('CepExists > ', cepExists);
+
+    if (cepExists) return res.status(200).json(cepExists);
 
     let newCep = await axios.get(`${viaCepUri}${cep}/json/`);
     newCep = newCep.data;
 
     const address = {
-      cep: newCep.cep,
+      cep: newCep.cep.replace(/[^0-9]/g, ''),
       address: newCep.logradouro,
       additional: newCep.complemento,
       neighborhood: newCep.bairro,
