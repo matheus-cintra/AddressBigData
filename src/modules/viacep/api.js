@@ -27,6 +27,16 @@ router.get('/api/v1/addressBigData/:cep', async (req, res) => {
     if (cepExists) return res.status(200).json(cepExists);
 
     let newCep = await axios.get(`${viaCepUri}${cep}/json/`);
+
+    if(newCep.data.erro) {
+      return res.status(404).json({
+        sucess: false,
+        data: {
+          message: 'Error in get cep'
+        }
+      })
+    }
+    
     newCep = newCep.data;
 
     const address = {
