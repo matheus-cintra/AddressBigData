@@ -89,6 +89,9 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
     };
     const dom = new JSDOM(converted);
     const html = dom.window.document.querySelectorAll("#content > li");
+
+    console.warn("HTML > ", html);
+
     [...html].forEach((item) => {
       if (item.textContent.includes("Telefone")) {
         let _phone = item.textContent.slice(13).replace(/\s/g, "");
@@ -111,6 +114,8 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
     });
 
     const table = tabletojson.convert(converted);
+
+    console.warn("TABLE > ", table);
 
     if (!table || table.length <= 0) {
       return res
