@@ -74,8 +74,6 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
 
     const table = tabletojson.convert(converted);
 
-    console.warn("TABLE > ", table);
-
     if (!table || table.length <= 0) {
       return res
         .status(200)
@@ -127,8 +125,6 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
           role: item["Qualificação"],
         });
       });
-
-    console.warn("HTML > ", html);
 
     [...html].forEach((item) => {
       if (item.textContent.includes("Telefone")) {
