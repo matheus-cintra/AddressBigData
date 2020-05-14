@@ -138,7 +138,7 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
           _phone = _phone.map((x) => x.replace(/[^0-9]/g, ""));
           fields.phones = _phone;
         } else {
-          fields.phones = [_phone];
+          fields.phones = [_phone.replace(/[^0-9]/g, "")];
         }
       }
 
