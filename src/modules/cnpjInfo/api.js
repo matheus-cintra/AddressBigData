@@ -120,12 +120,13 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
       }
     });
 
-    table[1].forEach((item) => {
-      fields.partners.push({
-        name: item.Nome,
-        role: item["Qualificação"],
+    table[1] &&
+      table[1].forEach((item) => {
+        fields.partners.push({
+          name: item.Nome,
+          role: item["Qualificação"],
+        });
       });
-    });
 
     console.warn("HTML > ", html);
 
