@@ -90,29 +90,6 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
     const dom = new JSDOM(converted);
     const html = dom.window.document.querySelectorAll("#content > li");
 
-    console.warn("HTML > ", html);
-
-    [...html].forEach((item) => {
-      if (item.textContent.includes("Telefone")) {
-        let _phone = item.textContent.slice(13).replace(/\s/g, "");
-        if (_phone.includes("e")) {
-          _phone = _phone.split("e");
-          _phone = _phone.map((x) => x.replace(/[^0-9]/g, ""));
-          fields.phones = _phone;
-        } else {
-          fields.phones = [_phone];
-        }
-      }
-
-      if (item.textContent.includes("Correio")) {
-        let _email = item.textContent
-          .split("\n")[0]
-          .slice(20)
-          .replace(/\s/g, "");
-        fields.email = _email;
-      }
-    });
-
     const table = tabletojson.convert(converted);
 
     console.warn("TABLE > ", table);
@@ -166,6 +143,29 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
         name: item.Nome,
         role: item["Qualificação"],
       });
+    });
+
+    console.warn("HTML > ", html);
+
+    [...html].forEach((item) => {
+      if (item.textContent.includes("Telefone")) {
+        let _phone = item.textContent.slice(13).replace(/\s/g, "");
+        if (_phone.includes("e")) {
+          _phone = _phone.split("e");
+          _phone = _phone.map((x) => x.replace(/[^0-9]/g, ""));
+          fields.phones = _phone;
+        } else {
+          fields.phones = [_phone];
+        }
+      }
+
+      if (item.textContent.includes("Correio")) {
+        let _email = item.textContent
+          .split("\n")[0]
+          .slice(20)
+          .replace(/\s/g, "");
+        fields.email = _email;
+      }
     });
 
     fields.cnpj = cnpj;
