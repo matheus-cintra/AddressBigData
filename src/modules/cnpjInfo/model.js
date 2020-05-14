@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 
+let partner = {
+  name: String,
+  role: String,
+};
+
 const cnpjSchema = new mongoose.Schema(
   {
     cnpj: String,
@@ -8,7 +13,8 @@ const cnpjSchema = new mongoose.Schema(
     fantasyName: String,
     nature: String,
     email: String,
-    phone: String,
+    phones: [String],
+    partners: [partner],
     situation: String,
     situationMotive: String,
     isMei: { type: Boolean, default: false },

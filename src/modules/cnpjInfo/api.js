@@ -2,7 +2,23 @@ import Cnpj from "./model";
 import axios from "axios";
 import express from "express";
 import moment from "moment";
+import SocksProxyAgent from "socks-proxy-agent";
 import { cnpj as _cnpjCheck } from "cpf-cnpj-validator";
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+
+// const proxyHost = "177.10.200.245",
+//   proxyPort = "1080";
+// const proxyOptions = `socks4://${proxyHost}:${proxyPort}`;
+// const httpsAgent = new SocksProxyAgent(proxyOptions);
+
+// const CancelToken = axios.CancelToken;
+// const source = CancelToken.source();
+
+// setTimeout(() => {
+//   source.cancel();
+//   // Timeout Logic
+// }, 999999999);
 
 const tabletojson = require("tabletojson").Tabletojson;
 const Iconv = require("iconv").Iconv;
@@ -48,16 +64,52 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
         body: null,
         method: "GET",
         mode: "cors",
+        // httpAgent: httpsAgent,
+        // timeout: 999999999,
+        // cancelToken: source.token,
         responseType: "arraybuffer",
       })
       .catch((err) => {
         return res.status(500).json(err);
       });
 
+    if (!result.data) {
+      return res
+        .status(500)
+        .json({ success: false, data: { message: "Error fetchind data" } });
+    }
+
     let iconv = new Iconv("latin1", "utf-8");
     let converted = iconv
       .convert(new Buffer.from(result.data), "iso-8859-1")
       .toString();
+
+    let fields = {
+      partners: [],
+    };
+    const dom = new JSDOM(converted);
+    const html = dom.window.document.querySelectorAll("#content > li");
+    [...html].forEach((item) => {
+      if (item.textContent.includes("Telefone")) {
+        let _phone = item.textContent.slice(13).replace(/\s/g, "");
+        if (_phone.includes("e")) {
+          _phone = _phone.split("e");
+          _phone = _phone.map((x) => x.replace(/[^0-9]/g, ""));
+          fields.phones = _phone;
+        } else {
+          fields.phones = [_phone];
+        }
+      }
+
+      if (item.textContent.includes("Correio")) {
+        let _email = item.textContent
+          .split("\n")[0]
+          .slice(20)
+          .replace(/\s/g, "");
+        fields.email = _email;
+      }
+    });
+
     const table = tabletojson.convert(converted);
 
     if (!table || table.length <= 0) {
@@ -65,8 +117,6 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
         .status(200)
         .json({ success: true, data: { message: "Company Not Found" } });
     }
-
-    let fields = {};
 
     table[0].forEach((item) => {
       switch (item["0"]) {
@@ -104,6 +154,13 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
         default:
           break;
       }
+    });
+
+    table[1].forEach((item) => {
+      fields.partners.push({
+        name: item.Nome,
+        role: item["Qualificação"],
+      });
     });
 
     fields.cnpj = cnpj;
