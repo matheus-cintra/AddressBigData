@@ -5,7 +5,6 @@ import cors from "cors";
 import express from "express";
 import morgan from "morgan";
 import helmet from "helmet";
-import getCnpjInfo from "./modules/cnpjInfo/api";
 import "./database/bigdata";
 
 const app = express();
@@ -20,7 +19,7 @@ app.disable("x-powered-by");
 require("./modules/index")(app);
 
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "Welcome to BeautyApp BigData" });
+  res.status(200).json({ message: "Welcome to SiSMEI - SaaS BigData" });
 });
 
 app.use((req, res, next) => {
