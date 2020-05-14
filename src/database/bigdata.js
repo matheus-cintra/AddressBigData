@@ -1,10 +1,10 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const URI = process.env.BIGDATA_URI;
 
-module.exports = () => {
+(() => {
   mongoose
     .connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.warn(`BigData running on ${URI}`))
-    .catch(err => console.warn(`Error connecting to ${URI}`));
-};
+    .catch((err) => console.warn(`Error connecting to ${URI}`));
+})();
