@@ -7,6 +7,7 @@ const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const tabletojson = require("tabletojson").Tabletojson;
 const Iconv = require("iconv").Iconv;
+
 const cnpjInfoUri = "http://cnpj.info/";
 
 const router = express.Router();
@@ -35,21 +36,25 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
   }
 
   if (!cnpjInfo || (cnpjInfo && force)) {
-    const result = await axios.get(`${cnpjInfoUri}${cnpj}`, {
-      headers: {
-        accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-        "accept-language": "en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,es;q=0.6",
-        "cache-control": "max-age=0",
-        "upgrade-insecure-requests": "1",
-        cookie: "z=3",
-      },
-      referrerPolicy: "no-referrer-when-downgrade",
-      body: null,
-      method: "GET",
-      mode: "cors",
-      responseType: "arraybuffer",
-    });
+    const result = await axios
+      .get(`${cnpjInfoUri}${cnpj}`, {
+        headers: {
+          accept:
+            "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+          "accept-language": "en-US,en;q=0.9,pt-BR;q=0.8,pt;q=0.7,es;q=0.6",
+          "cache-control": "max-age=0",
+          "upgrade-insecure-requests": "1",
+          cookie: "z=3",
+        },
+        referrerPolicy: "no-referrer-when-downgrade",
+        body: null,
+        method: "GET",
+        mode: "cors",
+        responseType: "arraybuffer",
+      })
+      .catch((err) => {
+        return res.status(500).json(err);
+      });
 
     if (!result.data) {
       return res
