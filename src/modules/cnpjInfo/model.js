@@ -10,8 +10,9 @@ const cnpjSchema = new mongoose.Schema(
     email: String,
     phone: String,
     situation: String,
+    situationMotive: String,
     isMei: { type: Boolean, default: false },
-    lastSearch: { type: Date, default: Date.now },
+    lastSearch: Date,
   },
   { versionKey: false }
 );

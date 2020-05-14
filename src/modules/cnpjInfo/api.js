@@ -60,24 +60,62 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
       .toString();
     const table = tabletojson.convert(converted);
 
-    let ds = {
-      cnpj: cnpj,
-      companyName: table[0][1]["1"],
-      fantasyName: table[0][2]["1"],
-      foundedIn: moment(table[0][3]["1"], "YYYY-MM-DD").format("YYYY/MM/DD"),
-      nature: table[0][4]["1"],
-      situation: table[0][5]["1"],
-      isMei: table[0][10]["1"].trim().toUpperCase() === "SIM" ? true : false,
-      lastSearch: Date.now(),
-    };
+    if (!table || table.length <= 0) {
+      return res
+        .status(200)
+        .json({ success: true, data: { message: "Company Not Found" } });
+    }
+
+    let fields = {};
+
+    table[0].forEach((item) => {
+      switch (item["0"]) {
+        case "Nome da empresa":
+          fields.companyName = item["1"];
+          break;
+
+        case "Fantasia nome":
+          fields.fantasyName = item["1"];
+          break;
+
+        case "Inicio atividade data":
+          fields.foundedIn = moment(item["1"], "YYYY-MM-DD").format(
+            "YYYY/MM/DD"
+          );
+          break;
+
+        case "Natureza jurídica":
+          fields.nature = item["1"];
+          break;
+
+        case "Situação cadastral":
+          fields.situation = item["1"];
+          break;
+
+        case "Motivo situação cadastral":
+          fields.situationMotive = item["1"];
+          break;
+
+        case "Opção pelo MEI":
+          fields.isMei =
+            item["1"].trim().toUpperCase() === "SIM" ? true : false;
+          break;
+
+        default:
+          break;
+      }
+    });
+
+    fields.cnpj = cnpj;
+    fields.lastSearch = Date.now();
 
     const resultSave = force
       ? await Cnpj.findOneAndUpdate(
           { _id: cnpjInfo._id },
-          { $set: { ...ds } },
+          { $set: { ...fields } },
           { new: true }
         )
-      : await Cnpj.create({ ...ds });
+      : await Cnpj.create({ ...fields });
     res.status(200).json({
       success: true,
       data: { message: `${force ? "Updated" : "Created"}`, data: resultSave },
