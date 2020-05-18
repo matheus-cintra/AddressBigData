@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(helmet());
 app.disable("x-powered-by");
 
-require("./modules/index")(app);
+setTimeout(() => require("./modules/index")(app), 3000);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Welcome to SiSMEI - SaaS BigData" });

@@ -35,10 +35,6 @@ router.get("/api/v1/getCnpjInfo/:cnpj/:force?", async (req, res) => {
       .json({ success: true, data: { message: "Success", company: cnpjInfo } });
   }
 
-  const test = await axios.get("https://randomuser.me/api/");
-
-  console.warn("TESTE DE API > ", test.data);
-
   if (!cnpjInfo || (cnpjInfo && force)) {
     const result = await axios
       .get(`${cnpjInfoUri}${cnpj}`, {
