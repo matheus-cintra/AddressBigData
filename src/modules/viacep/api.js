@@ -49,6 +49,7 @@ router.get("/api/v1/addressBigData/:cep/:force?", async (req, res) => {
       unity: newCep.unidade,
       ibge: newCep.ibge,
       gia: newCep.gia,
+      lastSearchAt: cepExists ? Date.now() : undefined
     };
 
     const result = !cepExists
