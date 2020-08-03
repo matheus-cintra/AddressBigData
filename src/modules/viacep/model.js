@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const addressSchema = new mongoose.Schema(
   {
@@ -12,15 +12,15 @@ const addressSchema = new mongoose.Schema(
     ibge: String,
     gia: String,
     createdAt: { type: Date, default: Date.now() },
-    lastSearchAt: { type: Date, default: Date.now() }
+    lastSearchAt: { type: Date, default: Date.now },
   },
   { versionKey: false }
 );
 
 const Address = mongoose.model(
-  'Address',
+  "Address",
   addressSchema,
-  'core_address_bigData'
+  "core_address_bigData"
 );
 
 export default Address;
