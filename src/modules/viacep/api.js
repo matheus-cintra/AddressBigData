@@ -44,6 +44,7 @@ router.get('/api/v1/addressBigData/:cep', async (req, res) => {
       address: newCep.logradouro,
       additional: newCep.complemento,
       neighborhood: newCep.bairro,
+      city: newCep.localidade,
       state: newCep.uf,
       unity: newCep.unidade,
       ibge: newCep.ibge,
