@@ -51,7 +51,7 @@ router.get("/api/v1/addressBigData/:cep/:force?", async (req, res) => {
       gia: newCep.gia,
     };
 
-    const result = cepExists
+    const result = !cepExists
       ? await Address.create({ ...address })
       : await Address.updateOne(
           { _id: cepExists._id },
